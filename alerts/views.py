@@ -44,11 +44,14 @@ def dashboard(request):
 
 @login_required
 def set_location(request):
-    if request.method == 'POST':
-        # Save the user's location in the session
-        request.session['latitude'] = float(request.POST.get('latitude'))
-        request.session['longitude'] = float(request.POST.get('longitude'))
-        return redirect('dashboard')  # Redirect to the dashboard
+    try:
+        if request.method == 'POST':
+            # Save the user's location in the session
+            request.session['latitude'] = float(request.POST.get('latitude'))
+            request.session['longitude'] = float(request.POST.get('longitude'))
+            return redirect('dashboard')  # Redirect to the dashboard
+    except ValueError:
+        pass
     return render(request, 'set_location.html')
 
 @login_required
