@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">Disaster Alert App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'set_location' %}">Set Location</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="navbar-text me-3">
+                            Welcome, {{ request.user.username }}!
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-danger" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard content -->
+    <div class="container mt-5">
+        <h1 class="text-center">Disaster Alert Dashboard</h1>
+        <p class="text-center">
+            Your current location: Latitude {{ latitude }}, Longitude {{ longitude }}
+            <br>
+            <a href="{% url 'set_location' %}">Change location</a>
+        </p>
+        <div id="disaster-list" class="mt-4">
+            <!-- Display existing disasters -->
+            {% for disaster in disasters %}
+                <div class="alert alert-warning">
+                    <strong>{{ disaster.name }}</strong><br>
+                    Location: {{ disaster.location }}<br>
+                    Severity: {{ disaster.severity }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">© 2023 Disaster Alert App. All rights reserved.</span>
+        </div>
+    </footer>
+
+
+    <script>
+        // Fetch user location from the session
+        const latitude = {{ latitude }};
+        const longitude = {{ longitude }};
+
+        // Send location to the server
+        fetch('/alerts/update-location/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: `latitude=${latitude}&longitude=${longitude}`,
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display nearby disasters
+            const disasterList = document.getElementById('disaster-list');
+            disasterList.innerHTML = '';
+
+            if (data.disasters.length > 0) {
+                data.disasters.forEach(disaster => {
+                    const disasterItem = document.createElement('div');
+                    disasterItem.className = 'alert alert-warning';
+                    disasterItem.innerHTML = `
+                        <strong>${disaster.name}</strong><br>
+                        Location: ${disaster.location}<br>
+                        Severity: ${disaster.severity}
+                    `;
+                    disasterList.appendChild(disasterItem);
+                });
+            } else {
+                disasterList.innerHTML = '<div class="alert alert-info">No disasters nearby.</div>';
+            }
+        });
+
+
+    </script>
+    <script>
+        let lastDisasters = [];  // Store the last fetched disasters
+        let isFirstLoad = true;  // Flag to track if it's the first load after an empty state
+    
+        // Function to fetch new disasters
+        function fetchNewDisasters() {
+            const latitude = {{ latitude }};
+            const longitude = {{ longitude }};
+    
+            fetch('/alerts/check-new-disasters/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: `latitude=${latitude}&longitude=${longitude}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                const disasterList = document.getElementById('disaster-list');
+                disasterList.innerHTML = '';  // Clear the list
+    
+                if (data.disasters.length > 0) {
+                    data.disasters.forEach(disaster => {
+                        const disasterItem = document.createElement('div');
+                        disasterItem.className = 'alert alert-warning';
+                        disasterItem.innerHTML = `
+                            <strong>${disaster.name}</strong><br>
+                            Location: ${disaster.location}<br>
+                            Severity: ${disaster.severity}
+                        `;
+                        disasterList.appendChild(disasterItem);
+                    });
+    
+                    // If it's not the first load (i.e., lastDisasters is not empty), compare disasters
+                    if (!isFirstLoad) {
+                        const { additions, modifications, deletions } = compareDisasters(lastDisasters, data.disasters);
+    
+                        // Alert user with the detected changes
+                        if (additions.length > 0 || modifications.length > 0 || deletions.length > 0) {
+                            let alertMessage = '';
+    
+                            if (additions.length > 0) {
+                                alertMessage += `New disasters added: ${additions.map(d => d.name).join(', ')}.\n`;
+                            }
+    
+                            if (modifications.length > 0) {
+                                alertMessage += `Disasters modified: ${modifications.map(d => d.name).join(', ')}.\n`;
+                            }
+    
+                            if (deletions.length > 0) {
+                                alertMessage += `Disasters removed: ${deletions.map(d => d.name).join(', ')}.\n`;
+                            }
+    
+                            alert(alertMessage.trim());
+                        }
+                    }
+    
+                    // Update last disasters and set isFirstLoad to false
+                    lastDisasters = data.disasters;
+                    isFirstLoad = false;
+                } else {
+                    disasterList.innerHTML = '<div class="alert alert-info">No disasters nearby.</div>';
+    
+                    // Handle the case where data becomes empty after having disasters
+                    if (lastDisasters.length > 0) {
+                        alert("All disasters have been removed.");
+                        lastDisasters = [];  // Clear the lastDisasters after deletion
+                    }
+                }
+            });
+        }
+    
+        // Helper function to compare two arrays of disasters
+        function compareDisasters(oldDisasters, newDisasters) {
+            let additions = [];
+            let modifications = [];
+            let deletions = [];
+    
+            // Find additions and modifications
+            newDisasters.forEach(newDisaster => {
+                const oldDisaster = oldDisasters.find(d => d.name === newDisaster.name);
+                if (!oldDisaster) {
+                    additions.push(newDisaster);
+                } else if (oldDisaster.severity !== newDisaster.severity || oldDisaster.location !== newDisaster.location) {
+                    modifications.push(newDisaster);
+                }
+            });
+    
+            // Find deletions
+            oldDisasters.forEach(oldDisaster => {
+                const newDisaster = newDisasters.find(d => d.name === oldDisaster.name);
+                if (!newDisaster) {
+                    deletions.push(oldDisaster);
+                }
+            });
+    
+            return { additions, modifications, deletions };
+        }
+    
+        // Poll for new disasters every 10 seconds
+        setInterval(fetchNewDisasters, 10000);
+        fetchNewDisasters();  // Fetch immediately on page load
+    </script>
+    
+    
+    
+</body>
+</html>
