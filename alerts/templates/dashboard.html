@@ -70,6 +70,8 @@
         const latitude = {{ latitude }};
         const longitude = {{ longitude }};
 
+        
+
         // Send location to the server
         fetch('/alerts/update-location/', {
             method: 'POST',
@@ -92,7 +94,18 @@
                     disasterItem.innerHTML = `
                         <strong>${disaster.name}</strong><br>
                         Location: ${disaster.location}<br>
-                        Severity: ${disaster.severity}
+                        Severity: ${disaster.severity}<br>
+                        Issue Time: ${new Date(disaster.timestamp).toLocaleString('en-US', {
+                            weekday: 'short', 
+                            year: 'numeric',
+                            month: 'short', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            timeZoneName: 'short', // e.g., "UTC"
+                            timeZone: 'UTC'
+                        })}
                     `;
                     disasterList.appendChild(disasterItem);
                 });
@@ -132,7 +145,18 @@
                         disasterItem.innerHTML = `
                             <strong>${disaster.name}</strong><br>
                             Location: ${disaster.location}<br>
-                            Severity: ${disaster.severity}
+                            Severity: ${disaster.severity}<br>
+                            Issue Time: ${new Date(disaster.timestamp).toLocaleString('en-US', {
+                            weekday: 'short', 
+                            year: 'numeric',
+                            month: 'short', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            timeZoneName: 'short',
+                            timeZone: 'UTC'
+                        })}
                         `;
                         disasterList.appendChild(disasterItem);
                     });

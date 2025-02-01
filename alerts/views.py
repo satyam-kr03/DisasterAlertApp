@@ -29,6 +29,7 @@ def update_location(request):
                 'severity': d.severity,
                 'latitude': d.latitude,
                 'longitude': d.longitude,
+                'timestamp': d.timestamp,
             }
             for d in disasters
         ]
@@ -89,6 +90,7 @@ def check_new_disasters(request):
                     'name': disaster.name,
                     'location': disaster.location,
                     'severity': disaster.severity,
+                    'timestamp': disaster.timestamp,
                 })
 
         return JsonResponse({'disasters': new_disasters})
