@@ -5,51 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Set Location</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 400px; margin-bottom: 20px; }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">Disaster Alert App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'set_location' %}">Set Location</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <span class="navbar-text me-3">
-                            Welcome, {{ request.user.username }}!
-                        </span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-danger" href="{% url 'logout' %}">Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <h2 class="text-center">Set Your Location</h2>
                 <form method="post">
                     {% csrf_token %}
+                    <div id="map"></div>
                     <div class="mb-3">
                         <label for="latitude" class="form-label">Latitude</label>
-                        <input type="text" name="latitude" class="form-control" id="latitude" required>
+                        <input type="text" name="latitude" class="form-control" id="latitude" readonly required>
                     </div>
                     <div class="mb-3">
                         <label for="longitude" class="form-label">Longitude</label>
-                        <input type="text" name="longitude" class="form-control" id="longitude" required>
+                        <input type="text" name="longitude" class="form-control" id="longitude" readonly required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Save Location</button>
                 </form>
@@ -60,28 +35,59 @@
         </div>
     </div>
 
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container text-center">
-            <span class="text-muted">© 2023 Disaster Alert App. All rights reserved.</span>
-        </div>
-    </footer>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Initialize the map
+        const map = L.map('map').setView([0, 0], 2);  // Default center at (0, 0) with zoom level 2
+
+        // Add a tile layer (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add a marker for location selection
+        let marker = null;
+
+        map.on('click', (e) => {
+            const { lat, lng } = e.latlng;
+
+            // Update the latitude and longitude fields
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+
+            // Move the marker to the clicked location
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map);
+            }
+        });
+
         // Function to fetch browser location
         function fetchBrowserLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        // Auto-fill the form with browser location
-                        document.getElementById('latitude').value = position.coords.latitude;
-                        document.getElementById('longitude').value = position.coords.longitude;
+                        const { latitude, longitude } = position.coords;
+
+                        // Update the latitude and longitude fields
+                        document.getElementById('latitude').value = latitude;
+                        document.getElementById('longitude').value = longitude;
+
+                        // Move the map and marker to the user's location
+                        map.setView([latitude, longitude], 13);
+                        if (marker) {
+                            marker.setLatLng([latitude, longitude]);
+                        } else {
+                            marker = L.marker([latitude, longitude]).addTo(map);
+                        }
                     },
                     (error) => {
-                        alert('Unable to fetch your location. Please enter it manually.');
+                        alert('Unable to fetch your location. Please select a location on the map.');
                     }
                 );
             } else {
-                alert('Geolocation is not supported by your browser. Please enter your location manually.');
+                alert('Geolocation is not supported by your browser. Please select a location on the map.');
             }
         }
 
