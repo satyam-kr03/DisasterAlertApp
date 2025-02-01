@@ -38,7 +38,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // Initialize the map
-        const map = L.map('map').setView([0, 0], 2);  // Default center at (0, 0) with zoom level 2
+        const map = L.map('map', {
+            worldCopyJump: true,  // Handle date line wrapping
+            maxBounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
+        }).setView([0, 0], 2);  // Default center at (0, 0) with zoom level 2
 
         // Add a tile layer (OpenStreetMap)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
