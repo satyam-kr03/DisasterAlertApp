@@ -10,7 +10,7 @@ class MapWidget(Widget):
 
     def render(self, name, value, attrs=None, renderer=None):
         # Create read-only input field
-        input_html = f'<input type="number" step="any" name="{name}" value="{value if value else ""}" id="id_{name}" readonly style="background-color: #f0f0f0;" />'
+        input_html = f'<input type="number" step="any" name="{name}" value="{value if value else ""}" id="id_{name}" readonly style="background-color: auto;" />'
         
         # Add map after longitude field
         if 'longitude' in name:
