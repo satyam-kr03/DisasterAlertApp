@@ -44,7 +44,7 @@
         <p class="text-center">
             Your current location: Latitude {{ latitude }}, Longitude {{ longitude }}
             <br>
-            <a href="{% url 'set_location' %}">Change location</a>
+            <a class="btn btn-outline-primary" href="{% url 'set_location' %}">Change location</a>
         </p>
         <div id="disaster-list" class="mt-4">
             <!-- Display existing disasters -->
