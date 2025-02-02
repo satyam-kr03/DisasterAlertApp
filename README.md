@@ -48,6 +48,7 @@ Contains project documentation including:
 - `manage.py`: Django's command-line utility for administrative tasks
 - `db.sqlite3`: SQLite database file (should be excluded from version control)
 - `requirements.txt`: Lists all Python dependencies for easy installation
-  \
 
 # Project Setup
+
+See [installation instructions](docs/installation.md) to set up the project.
