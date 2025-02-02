@@ -52,3 +52,9 @@ Contains project documentation including:
 # Project Setup
 
 See [installation instructions](docs/installation.md) to set up the project.
+
+### Screenshots
+
+![alt text](media/ss1.png)
+
+![alt text](media/ss2.png)
