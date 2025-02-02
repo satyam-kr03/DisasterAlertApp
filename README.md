@@ -51,7 +51,7 @@ Contains project documentation including:
 
 # Project Setup
 
-See [installation instructions](docs/installation.md) to set up the project.
+See the [installation guide](docs/installation.md) to set up the project.
 
 ### Screenshots
 
