@@ -55,6 +55,10 @@ See [installation instructions](docs/installation.md) to set up the project.
 
 ### Screenshots
 
+#### Set Location
+
 ![alt text](media/ss1.png)
+
+#### User Dashboard
 
 ![alt text](media/ss2.png)
