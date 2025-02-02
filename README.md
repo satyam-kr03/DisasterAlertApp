@@ -53,7 +53,7 @@ Contains project documentation including:
 
 See the [installation guide](docs/installation.md) to set up the project.
 
-### Screenshots
+# Screenshots
 
 #### Set Location
 
