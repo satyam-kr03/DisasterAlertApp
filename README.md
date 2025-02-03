@@ -1,15 +1,64 @@
 # Disaster Alert App
 
-### To setup the project:
-```shell
-  git clone https://github.com/YashChaudharyBz/DisasterAlertApp.git
-  cd DisasterAlertApp
-  pip install asgiref==3.7.2 channels==4.0.0 Django==4.2.7 django-crispy-forms==2.1 django-environ==0.11.2 geopy==2.4.1 gunicorn==21.2.0 python-decouple==3.8 pytz==2023.3 sqlparse==0.4.4 whitenoise==6.6.0
-  python manage.py makemigrations alerts
-  python manage.py migrate
+A disaster alert system that sends real-time alerts to users in affected regions.
+
+# Project Structure
+
+```
+DisasterAlertApp/
+├── alerts/                     # Main application directory
+├── db.sqlite3                  # SQLite database file
+├── DisasterAlertApp/          # Project configuration directory
+├── docs/                      # Documentation files
+├── manage.py                  # Django management script
+├── README.md                  # Project documentation
+└── requirements.txt           # Python dependencies
 ```
 
-### To use the app:
-```shell
-  python manage.py runserver
-```
+## Directory Details
+
+### alerts/
+
+The main application directory containing the core functionality for disaster alerts. This includes:
+
+- Models for alert data
+- Views for handling alert logic
+- Templates for displaying alerts
+- URL routing configurations
+
+### DisasterAlertApp/
+
+The project's main configuration directory containing:
+
+- `settings.py`: Project settings and configurations
+- `urls.py`: Main URL routing
+- `wsgi.py`: WSGI application configuration
+- `asgi.py`: ASGI application configuration
+
+### docs/
+
+Contains project documentation including:
+
+- Technical specifications
+- API documentation
+- Installation instructions
+
+### Additional Files
+
+- `manage.py`: Django's command-line utility for administrative tasks
+- `db.sqlite3`: SQLite database file
+- `requirements.txt`: Lists all Python dependencies for easy installation
+
+# Project Setup
+
+See the [installation guide](docs/installation.md) to set up the project.
+
+# Screenshots
+
+#### Set Location
+
+![alt text](media/ss1.png)
+
+#### User Dashboard
+
+![alt text](media/ss2.png)
