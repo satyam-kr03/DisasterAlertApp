@@ -25,7 +25,7 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav">
-                    <li class="nav-item">
+                    <li class="nav-item mt-2">
                         <span class="navbar-text me-3">
                             Welcome, {{ request.user.username }}!
                         </span>
@@ -39,12 +39,12 @@
     </nav>
 
     <!-- Dashboard content -->
-    <div class="container mt-5">
+    <div class="container mt-5" style="padding-bottom: 55px;">
         <h1 class="text-center">Disaster Alert Dashboard</h1>
-        <p class="text-center">
+        <p class="text-center mt-3">
             Your current location: Latitude {{ latitude }}, Longitude {{ longitude }}
             <br>
-            <a class="btn btn-outline-primary" href="{% url 'set_location' %}">Change location</a>
+            <a class="btn btn-outline-primary mt-3" href="{% url 'set_location' %}">Change location</a>
         </p>
         <div id="disaster-list" class="mt-4">
             <!-- Display existing disasters -->
@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <footer class="footer mt-auto py-3 bg-light">
+    <footer class="footer mt-auto py-3 bg-light fixed-bottom w-100">
         <div class="container text-center">
             <span class="text-muted">© 2025 Disaster Alert App. All rights reserved.</span>
         </div>
