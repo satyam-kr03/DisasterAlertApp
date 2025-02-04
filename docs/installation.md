@@ -39,6 +39,7 @@ pip install -r requirements.txt
 ```shell
 python manage.py makemigrations alerts
 python manage.py migrate
+python manage.py collectstatic
 ```
 
 ## 5. Start Development Server
